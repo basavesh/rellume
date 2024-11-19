@@ -24,7 +24,7 @@ if not libllvm.found()
   # Try static libraries.
   libllvm = dependency('llvm', version: llvm_version, static: true,
                        method: 'config-tool', include_type: 'system',
-                       modules: ['x86', 'aarch64', 'riscv', 'executionengine'])
+                       modules: ['x86', 'executionengine'])
 endif
 add_project_arguments(['-DLL_LLVM_MAJOR='+libllvm.version().split('.')[0]], language: 'cpp')
 
@@ -35,20 +35,6 @@ if get_option('with_x86_64')
                          fallback: ['fadec', 'fadec'],
                          default_options: ['archmode=only64'])
   architectures += 'x86_64'
-endif
-if get_option('with_rv64')
-  archdeps += dependency('frvdec', static: true,
-                         fallback: ['frvdec', 'frvdec'])
-  architectures += 'rv64'
-endif
-if get_option('with_aarch64')
-  # Disable all warnings for farmdec. This is mostly about non-standard
-  # extensions (forward declarations of enums, binary literals, anon structs).
-  archdeps += dependency('farmdec', static: true,
-                         fallback: ['farmdec', 'farmdec'],
-                         default_options: ['warning_level=0'],
-                         include_type: 'system')
-  architectures += 'aarch64'
 endif
 
 foreach arch : architectures

@@ -4,23 +4,10 @@ casefiles = {
     'cases_modrm.txt',
     'cases_string.txt',
     'cases_sse.txt',
-  ],
-  'rv64': [
-    'cases_rv64_basic.txt',
-    'cases_rv64_bitmanip.txt',
-  ],
-  'aarch64': [
-    'a64_data_proc.txt',
-    'a64_loads_stores.txt',
-    'a64_branches_and_cond.txt',
-    'a64_scalar_fp.txt',
-    'a64_simd.txt',
   ]
 }
 llvm_targets = {
   'x86_64': 'X86',
-  'rv64': 'RISCV',
-  'aarch64': 'AArch64',
 }
 
 test_architectures = []

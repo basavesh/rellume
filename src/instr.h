@@ -27,12 +27,6 @@
 #ifdef RELLUME_WITH_X86_64
 #include <fadec.h>
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-#include <frvdec.h>
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-#include <farmdec.h>
-#endif // RELLUME_WITH_AARCH64
 
 #include <cassert>
 #include <cstdbool>
@@ -51,12 +45,6 @@ class Instr {
 #ifdef RELLUME_WITH_X86_64
         FdInstr x86_64;
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-        FrvInst rv64;
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-        farmdec::Inst _a64;
-#endif // RELLUME_WITH_AARCH64
     };
 
 public:
@@ -129,19 +117,6 @@ public:
     uintptr_t start() const { return addr; }
     uintptr_t end() const { return start() + len(); }
 
-#ifdef RELLUME_WITH_RV64
-    operator const FrvInst*() const {
-        assert(arch == Arch::RV64);
-        return &rv64;
-    }
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    operator const farmdec::Inst*() const {
-        assert(arch == Arch::AArch64);
-        return &_a64;
-    }
-#endif // RELLUME_WITH_AARCH64
-
     /// Fill Instr with the instruction at buf and return number of consumed
     /// bytes (or negative on error). addr is the virtual address of the
     /// instruction.
@@ -155,26 +130,6 @@ public:
             res = fd_decode(buf, len, /*mode=*/64, /*addr=*/0, &x86_64);
             break;
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-        case Arch::RV64:
-            res = frv_decode(len, buf, FRV_RV64, &rv64);
-            break;
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-        case Arch::AArch64: {
-            if (len < 4) {
-                return -1;
-            }
-
-            uint32_t binst = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-            fad_decode(&binst, 1, &_a64);
-            if (_a64.op == farmdec::A64_ERROR || _a64.op == farmdec::A64_UNKNOWN) {
-                return -1;
-            }
-            res = 4; // all instructions are 32 bits long
-            break;
-        }
-#endif // RELLUME_WITH_AARCH64
         default:
             break;
         }

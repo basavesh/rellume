@@ -29,9 +29,7 @@
 #include "config.h"
 #include "function-info.h"
 #include "instr.h"
-#include "a64/lifter.h"
 #include "x86-64/lifter.h"
-#include "rv64/lifter.h"
 #include "regfile.h"
 #include <llvm/ADT/DepthFirstIterator.h>
 #include <llvm/ADT/SmallVector.h>
@@ -107,12 +105,6 @@ llvm::Function* LiftHelper::Lift() {
 #ifdef RELLUME_WITH_X86_64
     case Arch::X86_64: lift_fn = x86_64::LiftInstruction; break;
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-    case Arch::RV64: lift_fn = rv64::LiftInstruction; break;
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    case Arch::AArch64: lift_fn = aarch64::LiftInstruction; break;
-#endif // RELLUME_WITH_AARCH64
     default:
         return nullptr;
     }

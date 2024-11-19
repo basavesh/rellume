@@ -45,12 +45,6 @@ CallConv CallConv::FromFunction(llvm::Function* fn, Arch arch) {
 #ifdef RELLUME_WITH_X86_64
     case Arch::X86_64: hunch = X86_64_SPTR; break;
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-    case Arch::RV64: hunch = RV64_SPTR; break;
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    case Arch::AArch64: hunch = AArch64_SPTR; break;
-#endif // RELLUME_WITH_AARCH64
     default:
         return INVALID;
     }
@@ -89,8 +83,6 @@ llvm::CallingConv::ID CallConv::FnCallConv() const {
     switch (*this) {
     default: return llvm::CallingConv::C;
     case CallConv::X86_64_SPTR: return llvm::CallingConv::C;
-    case CallConv::RV64_SPTR: return llvm::CallingConv::C;
-    case CallConv::AArch64_SPTR: return llvm::CallingConv::C;
     }
 }
 
@@ -98,8 +90,6 @@ unsigned CallConv::CpuStructParamIdx() const {
     switch (*this) {
     default: return 0;
     case CallConv::X86_64_SPTR:  return 0;
-    case CallConv::RV64_SPTR:    return 0;
-    case CallConv::AArch64_SPTR: return 0;
     }
 }
 
@@ -107,8 +97,6 @@ Arch CallConv::ToArch() const {
     switch (*this) {
     default: return Arch::INVALID;
     case CallConv::X86_64_SPTR:  return Arch::X86_64;
-    case CallConv::RV64_SPTR:    return Arch::RV64;
-    case CallConv::AArch64_SPTR: return Arch::AArch64;
     }
 }
 
@@ -138,24 +126,6 @@ static span<const CPUStructEntry> CPUStructEntries(CallConv cconv) {
     };
 #endif // RELLUME_WITH_X86_64
 
-#ifdef RELLUME_WITH_RV64
-    static const CPUStructEntry cpu_struct_entries_rv64[] = {
-#define RELLUME_MAPPED_REG(nameu,off,reg,facet) \
-            std::make_tuple(SptrIdx::rv64::nameu, off, reg, facet),
-#include <rellume/cpustruct-rv64-private.inc>
-#undef RELLUME_MAPPED_REG
-    };
-#endif // RELLUME_WITH_RV64
-
-#ifdef RELLUME_WITH_AARCH64
-    static const CPUStructEntry cpu_struct_entries_aarch64[] = {
-#define RELLUME_MAPPED_REG(nameu,off,reg,facet) \
-            std::make_tuple(SptrIdx::aarch64::nameu, off, reg, facet),
-#include <rellume/cpustruct-aarch64-private.inc>
-#undef RELLUME_MAPPED_REG
-    };
-#endif // RELLUME_WITH_AARCH64
-
     switch (cconv) {
     default:
         return span<const CPUStructEntry>();
@@ -163,14 +133,6 @@ static span<const CPUStructEntry> CPUStructEntries(CallConv cconv) {
     case CallConv::X86_64_SPTR:
         return cpu_struct_entries_x86_64;
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-    case CallConv::RV64_SPTR:
-        return cpu_struct_entries_rv64;
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    case CallConv::AArch64_SPTR:
-        return cpu_struct_entries_aarch64;
-#endif // RELLUME_WITH_AARCH64
     }
 }
 

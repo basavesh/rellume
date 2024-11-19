@@ -89,63 +89,6 @@ std::pair<InstrKind, uint64_t> classifyInstr(Arch arch, const Instr& inst) {
             return {InstrKind::UNKNOWN, 0};
         }
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-    case Arch::RV64: {
-        const FrvInst* rv64 = inst;
-        switch (rv64->mnem) {
-        default:
-            return {InstrKind::OTHER, 0};
-        case FRV_BEQ:
-        case FRV_BNE:
-        case FRV_BLT:
-        case FRV_BGE:
-        case FRV_BLTU:
-        case FRV_BGEU:
-            return {InstrKind::COND_BRANCH, inst.start() + rv64->imm};
-        case FRV_JAL:
-            if (rv64->rd)
-                return {InstrKind::CALL, 0};
-            return {InstrKind::BRANCH, inst.start() + rv64->imm};
-        case FRV_JALR:
-            return {rv64->rd ? InstrKind::CALL : InstrKind::BRANCH, 0};
-        case FRV_ECALL:
-            return {InstrKind::UNKNOWN, 0};
-        }
-    }
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    case Arch::AArch64: {
-        const farmdec::Inst* a64 = inst;
-        switch (a64->op) {
-        default:
-            return {InstrKind::OTHER, 0};
-        case farmdec::A64_BCOND:
-        case farmdec::A64_CBZ:
-        case farmdec::A64_CBNZ:
-            return {InstrKind::COND_BRANCH, inst.start() + a64->offset};
-        case farmdec::A64_TBZ:
-        case farmdec::A64_TBNZ:
-            return {InstrKind::COND_BRANCH, inst.start() + a64->tbz.offset};
-        case farmdec::A64_B:
-            return {InstrKind::BRANCH, inst.start() + a64->offset};
-        case farmdec::A64_BR:
-            return {InstrKind::BRANCH, 0};
-        case farmdec::A64_BL:
-        case farmdec::A64_BLR:
-            return {InstrKind::CALL, 0};
-        case farmdec::A64_RET:
-        case farmdec::A64_SVC:
-        case farmdec::A64_HVC:
-        case farmdec::A64_SMC:
-        case farmdec::A64_BRK:
-        case farmdec::A64_HLT:
-        case farmdec::A64_DCPS1:
-        case farmdec::A64_DCPS2:
-        case farmdec::A64_DCPS3:
-            return {InstrKind::UNKNOWN, 0};
-        }
-    }
-#endif // RELLUME_WITH_AARCH64
     default:
         return {InstrKind::UNKNOWN, 0};
     }

@@ -32,13 +32,6 @@ enum class Arch : unsigned {
 #ifdef RELLUME_WITH_X86_64
     X86_64, // x86-64 (Intel 64, actually)
 #endif // RELLUME_WITH_X86_64
-#ifdef RELLUME_WITH_RV64
-    RV64, // RISC-V, 64 bit
-#endif // RELLUME_WITH_RV64
-#ifdef RELLUME_WITH_AARCH64
-    AArch64, // ARM AArch64
-#endif // RELLUME_WITH_AARCH64
-
     // Backwards compatibility: if no architecture is specified explicitly,
     // Rellume defaults to x86-64.
 #ifdef RELLUME_WITH_X86_64
