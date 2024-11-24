@@ -108,11 +108,9 @@ void ll_config_enable_full_facets(LLConfig* cfg, bool enable) {
 }
 bool ll_config_set_architecture(LLConfig* cfg, const char *s) {
     if (!strcmp(s, "x86-64") || !strcmp(s, "x86_64")) {
-#ifdef RELLUME_WITH_X86_64
         unwrap(cfg)->arch = rellume::Arch::X86_64;
         unwrap(cfg)->callconv = rellume::CallConv::X86_64_SPTR;
         return true;
-#endif // RELLUME_WITH_X86_64
     }
     return false;
 }

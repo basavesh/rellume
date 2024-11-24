@@ -102,9 +102,7 @@ llvm::Function* LiftHelper::Lift() {
 
     LiftFn* lift_fn;
     switch (cfg->arch) {
-#ifdef RELLUME_WITH_X86_64
     case Arch::X86_64: lift_fn = x86_64::LiftInstruction; break;
-#endif // RELLUME_WITH_X86_64
     default:
         return nullptr;
     }

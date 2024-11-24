@@ -29,16 +29,10 @@ namespace rellume {
 
 enum class Arch : unsigned {
     INVALID,
-#ifdef RELLUME_WITH_X86_64
     X86_64, // x86-64 (Intel 64, actually)
-#endif // RELLUME_WITH_X86_64
     // Backwards compatibility: if no architecture is specified explicitly,
     // Rellume defaults to x86-64.
-#ifdef RELLUME_WITH_X86_64
     DEFAULT = X86_64
-#else // !RELLUME_WITH_X86_64
-    DEFAULT = INVALID
-#endif // RELLUME_WITH_X86_64
 };
 
 } // namespace rellume

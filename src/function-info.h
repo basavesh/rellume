@@ -38,15 +38,14 @@ class Value;
 
 namespace rellume {
 
-#ifdef RELLUME_WITH_X86_64
 namespace SptrIdx::x86_64 {
     enum {
 #define RELLUME_MAPPED_REG(nameu,...) nameu,
-#include <rellume/cpustruct-x86_64-private.inc>
+#include "cpustruct-x86_64-private.inc"
 #undef RELLUME_MAPPED_REG
     };
 }
-#endif // RELLUME_WITH_X86_64
+
 
 class ArchBasicBlock;
 class RegFile;

@@ -195,9 +195,7 @@ public:
     impl(Arch arch, llvm::BasicBlock* bb)
             : irb(bb), dirty_regs() {
         switch (arch) {
-#ifdef RELLUME_WITH_X86_64
         case Arch::X86_64: ivec_facet = Facet::V2I64; break;
-#endif // RELLUME_WITH_X86_64
         default: assert(false);
         }
     }

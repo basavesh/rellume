@@ -62,19 +62,15 @@ class TestCase {
 
     TestCase(std::ostringstream& diagnostic) : diagnostic(diagnostic) {
         static std::unordered_map<std::string,RegEntry> regs_empty = {};
-#ifdef RELLUME_WITH_X86_64
         static std::unordered_map<std::string,RegEntry> regs_x86_64 = {
 #define RELLUME_NAMED_REG(name,nameu,sz,off) {#name, {sz, off}},
 #include <rellume/cpustruct-x86_64-private.inc>
 #undef RELLUME_NAMED_REG
         };
-#endif // RELLUME_WITH_X86_64
 
         regs = &regs_empty;
-#ifdef RELLUME_WITH_X86_64
         if (!strcmp(opt_arch, "x86_64"))
             regs = &regs_x86_64;
-#endif // RELLUME_WITH_X86_64
     }
 
     ~TestCase() {

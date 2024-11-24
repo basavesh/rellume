@@ -24,9 +24,7 @@
 #ifndef RELLUME_INSTR_H
 #define RELLUME_INSTR_H
 
-#ifdef RELLUME_WITH_X86_64
 #include <fadec.h>
-#endif // RELLUME_WITH_X86_64
 
 #include <cassert>
 #include <cstdbool>
@@ -42,14 +40,11 @@ class Instr {
     unsigned char instlen;
     uint64_t addr;
     union {
-#ifdef RELLUME_WITH_X86_64
         FdInstr x86_64;
-#endif // RELLUME_WITH_X86_64
     };
 
 public:
 
-#ifdef RELLUME_WITH_X86_64
     using Type = FdInstrType;
     struct Reg {
         uint16_t rt;
@@ -110,7 +105,6 @@ public:
     bool has_rep() const { return FD_HAS_REP(&x86_64); }
     bool has_repnz() const { return FD_HAS_REPNZ(&x86_64); }
     bool has_lock() const { return FD_HAS_LOCK(&x86_64); }
-#endif // RELLUME_WITH_X86_64
 
 
     size_t len() const { return instlen; }
@@ -125,11 +119,9 @@ public:
         this->addr = addr;
         int res = -1;
         switch (arch) {
-#ifdef RELLUME_WITH_X86_64
         case Arch::X86_64:
             res = fd_decode(buf, len, /*mode=*/64, /*addr=*/0, &x86_64);
             break;
-#endif // RELLUME_WITH_X86_64
         default:
             break;
         }
