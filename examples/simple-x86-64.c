@@ -27,13 +27,28 @@ int main(void) {
     // Create LLVM module
     LLVMModuleRef mod = LLVMModuleCreateWithName("lifter");
 
+    // static const unsigned char code[] = {
+    //     0x48, 0x89, 0xf8, // mov rax,rdi
+    //     0x48, 0x39, 0xf7, // cmp rdi,rsi
+    //     0x7d, 0x03,       // jge $+3
+    //     0x48, 0x89, 0xf0, // mov rax,rsi
+    //     0xc3,             // ret
+    // };
+
     static const unsigned char code[] = {
-        0x48, 0x89, 0xf8, // mov rax,rdi
-        0x48, 0x39, 0xf7, // cmp rdi,rsi
-        0x7d, 0x03,       // jge $+3
-        0x48, 0x89, 0xf0, // mov rax,rsi
-        0xc3,             // ret
+        0x55,                                       // push rbp
+        0x48, 0x89, 0xe5,                           // mov rbp,rsp
+        0xc7, 0x45, 0xf4, 0x02, 0x00, 0x00, 0x00,   // mov DWORD PTR [rbp-0xc],0x2
+        0xc7, 0x45, 0xf8, 0x03, 0x00, 0x00, 0x00,   // mov DWORD PTR [rbp-0x8],0x3
+        0x8b, 0x55, 0xf4,                           // mov edx,DWORD PTR [rbp-0xc]
+        0x8b, 0x45, 0xf8,                           // mov eax,DWORD PTR [rbp-0x8]
+        0x01, 0xd0,                                 // add eax,edx
+        0x89, 0x45, 0xfc,                           // mov DWORD PTR [rbp-0x4],eax
+        0x8b, 0x45, 0xfc,                           // mov eax,DWORD PTR [rbp-0x4]
+        0x5d,                                       // pop rbp
+        0xc3,                                       // ret
     };
+        
 
     // Create function for lifting
     LLConfig* cfg = ll_config_new();
@@ -43,6 +58,7 @@ int main(void) {
     // Lift the whole function by following all direct jumps
     ll_func_decode_cfg(fn, (uintptr_t) code, NULL, NULL);
     LLVMValueRef llvm_fn = ll_func_lift(fn);
+    LLVMSetValueName(llvm_fn, "main");
     LLVMDumpValue(llvm_fn);
 
     return 0;
