@@ -118,7 +118,7 @@ llvm::Function* LiftHelper::Lift() {
     fn->addParamAttr(cpu_param_idx, llvm::Attribute::NoCapture);
     auto align_attr = llvm::Attribute::get(ctx, llvm::Attribute::Alignment, 16);
     fn->addParamAttr(cpu_param_idx, align_attr);
-    fn->addDereferenceableParamAttr(cpu_param_idx, 0x190);
+    fn->addDereferenceableParamAttr(cpu_param_idx, 0x98);
 
     fi.fn = fn;
     fi.sptr_raw = &fn->arg_begin()[cpu_param_idx];
