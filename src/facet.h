@@ -29,35 +29,23 @@
 
 
 namespace rellume {
-
-/**
- * \brief The size of a vector
- **/
-#define LL_VECTOR_REGISTER_SIZE 128
-
 class Facet {
 public:
     enum Value {
 #define SCALAR_INT_FACET(fc, sz, ty) fc,
 #define SCALAR_FP_FACET(fc, sz, ty) fc,
 #define SPECIAL_FACET(fc, sz, ty) fc,
-#define VECTOR_FACET(fc, num, sc) fc,
 #define PSEUDO_INT_FACET(fc) fc,
-#define PSEUDO_VECTOR_FACET(fc, sc) fc,
 #include "facet.inc"
 #undef SCALAR_INT_FACET
 #undef SCALAR_FP_FACET
 #undef SPECIAL_FACET
-#undef VECTOR_FACET
 #undef PSEUDO_INT_FACET
-#undef PSEUDO_VECTOR_FACET
 
         MAX,
-        IVEC = I128,
     };
 
     static Facet In(unsigned bits);
-    static Facet Vnt(unsigned num, Facet scalar);
     static Facet FromType(llvm::Type*);
 
     unsigned Size() const;

@@ -84,7 +84,6 @@ private:
     llvm::Value* OpAddr(const Instr::Op op, llvm::Type* element_type, unsigned seg = 7);
     llvm::Value* OpLoad(const Instr::Op op, Facet facet, Alignment alignment = ALIGN_NONE, unsigned force_seg = 7);
     void OpStoreGp(const Instr::Op op, llvm::Value* value, Alignment alignment = ALIGN_NONE);
-    void OpStoreVec(const Instr::Op op, llvm::Value* value, Alignment alignment = ALIGN_IMP);
     void StackPush(llvm::Value* value);
     llvm::Value* StackPop(const ArchReg sp_src_reg = ArchReg::RSP);
 
@@ -194,58 +193,6 @@ private:
     void LiftScas(const Instr& inst);
     void LiftCmps(const Instr& inst);
 
-    // llinstruction-sse.cc
-    void LiftFence(const Instr&);
-    void LiftPrefetch(const Instr&, unsigned rw, unsigned locality);
-    void LiftFxsave(const Instr&);
-    void LiftFxrstor(const Instr&);
-    void LiftFstcw(const Instr&);
-    void LiftFstsw(const Instr&);
-    void LiftStmxcsr(const Instr&);
-    void LiftSseMovq(const Instr&, Facet type);
-    void LiftSseBinOp(const Instr&, llvm::Instruction::BinaryOps op, bool horz,
-                      Facet type);
-    void LiftSseMovScalar(const Instr&, Facet);
-    void LiftSseMovdq(const Instr&, Facet, Alignment);
-    void LiftSseMovntStore(const Instr&, Facet);
-    void LiftSseMovlp(const Instr&);
-    void LiftSseMovhps(const Instr&);
-    void LiftSseMovhpd(const Instr&);
-    void LiftSseAddSub(const Instr&, Facet op_type);
-    void LiftSseAndn(const Instr&, Facet op_type);
-    void LiftSseComis(const Instr&, Facet);
-    void LiftSseCmp(const Instr&, Facet op_type);
-    void LiftSseMinmax(const Instr&, llvm::CmpInst::Predicate, Facet);
-    void LiftSseSqrt(const Instr&, Facet op_type);
-    void LiftSseCvt(const Instr&, Facet src_type, Facet dst_type);
-    void LiftSseUnpck(const Instr&, Facet type);
-    void LiftSseShufpd(const Instr&);
-    void LiftSseShufps(const Instr&);
-    void LiftSsePshufd(const Instr&);
-    void LiftSsePshufw(const Instr&, unsigned off);
-    void LiftSseInsertps(const Instr&);
-    void LiftSsePinsr(const Instr&, Facet, Facet, unsigned);
-    void LiftSsePextr(const Instr&, Facet, unsigned);
-    void LiftSseMovdup(const Instr&, Facet, unsigned off);
-    void LiftSsePshiftElement(const Instr&, llvm::Instruction::BinaryOps op, Facet op_type);
-    void LiftSsePshiftBytes(const Instr&);
-    void LiftSsePalignr(const Instr&);
-    void LiftSsePavg(const Instr&, Facet);
-    void LiftSsePmulhw(const Instr&, llvm::Instruction::CastOps cast);
-    void LiftSsePmuldq(const Instr&, llvm::Instruction::CastOps ext);
-    void LiftSsePmaddwd(const Instr&);
-    void LiftSsePaddsubSaturate(const Instr& inst,
-                                llvm::Instruction::BinaryOps calc_op, bool sign,
-                                bool horz, Facet op_ty);
-    void LiftSsePsadbw(const Instr&);
-    void LiftSsePmaddubsw(const Instr&);
-    void LiftSsePack(const Instr&, Facet, bool sign);
-    void LiftSsePcmp(const Instr&, llvm::CmpInst::Predicate, Facet);
-    void LiftSsePminmax(const Instr&, llvm::CmpInst::Predicate, Facet);
-    void LiftSsePabs(const Instr&, Facet);
-    void LiftSsePsign(const Instr&, Facet);
-    void LiftSseMovmsk(const Instr&, Facet op_type);
-    void LiftSsePmovx(const Instr&, llvm::Instruction::CastOps ext, Facet from, Facet to);
 };
 
 } // namespace::x86_64

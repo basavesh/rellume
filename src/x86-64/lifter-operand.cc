@@ -51,8 +51,6 @@ ArchReg Lifter::MapReg(const Instr::Reg reg) {
         return ArchReg::GP(reg.ri);
     else if (reg.rt == FD_RT_GPH)
         return ArchReg::GP(reg.ri - FD_REG_AH);
-    else if (reg.rt == FD_RT_VEC)
-        return ArchReg::VEC(reg.ri);
     return ArchReg();
 }
 
@@ -210,18 +208,6 @@ void Lifter::OpStoreGp(const Instr::Op op, llvm::Value* value,
         StoreGpFacet(MapReg(op.reg()), facet, value);
     } else {
         assert(false && "gp-store to non-mem/non-reg");
-    }
-}
-
-void Lifter::OpStoreVec(const Instr::Op op, llvm::Value* value,
-                        Alignment alignment) {
-    if (op.is_mem()) {
-        llvm::Value* addr = OpAddr(op, value->getType());
-        llvm::StoreInst* store = irb.CreateStore(value, addr);
-        ll_operand_set_alignment(store, value->getType(), alignment, true);
-    } else {
-        assert(op.is_reg() && "vec-store to non-mem/non-reg");
-        regfile->Merge(MapReg(op.reg()), value);
     }
 }
 

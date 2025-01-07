@@ -40,19 +40,8 @@ Facet Facet::In(unsigned size) {
     return MAX;
 }
 
-Facet Facet::Vnt(unsigned num_i, Facet scalar) {
-#define VECTOR_FACET(fc, num, sc) if (num == num_i && sc == scalar) return fc;
-#include "facet.inc"
-#undef VECTOR_FACET
-    assert(false && "invalid count/type for vector facet");
-    return MAX;
-}
-
 Facet Facet::FromType(llvm::Type* type) {
-    if (type->isVectorTy()) {
-        auto num = llvm::cast<llvm::VectorType>(type)->getElementCount();
-        return Vnt(num.getFixedValue(), FromType(type->getScalarType()));
-    } else if (type->isIntegerTy()) {
+    if (type->isIntegerTy()) {
         return In(type->getIntegerBitWidth());
     } else if (type->isFloatTy()) {
         return F32;
@@ -69,12 +58,10 @@ unsigned Facet::Size() const {
 #define SCALAR_INT_FACET(fc, sz, ty) case Facet::fc: return sz;
 #define SCALAR_FP_FACET(fc, sz, ty) case Facet::fc: return sz;
 #define SPECIAL_FACET(fc, sz, ty) case Facet::fc: return sz;
-#define VECTOR_FACET(fc, num, sc) case Facet::fc: return num * Facet{sc}.Size();
 #include "facet.inc"
 #undef SCALAR_INT_FACET
 #undef SCALAR_FP_FACET
 #undef SPECIAL_FACET
-#undef VECTOR_FACET
     default:
         assert(false && "Size() called on pseudo-facet");
         return 0;
@@ -86,13 +73,10 @@ llvm::Type* Facet::Type(llvm::LLVMContext& ctx) const {
 #define SCALAR_INT_FACET(fc, sz, ty) case fc: return ty;
 #define SCALAR_FP_FACET(fc, sz, ty) case fc: return ty;
 #define SPECIAL_FACET(fc, sz, ty) case fc: return ty;
-#define VECTOR_FACET(fc, num, sc) \
-        case fc: return llvm::VectorType::get(Facet{sc}.Type(ctx), num, false);
 #include "facet.inc"
 #undef SCALAR_INT_FACET
 #undef SCALAR_FP_FACET
 #undef SPECIAL_FACET
-#undef VECTOR_FACET
     default:
         assert(false && "Type() called on pseudo-facet");
         return nullptr;
@@ -102,11 +86,8 @@ llvm::Type* Facet::Type(llvm::LLVMContext& ctx) const {
 Facet Facet::Resolve(unsigned bits) const {
     switch (*this) {
 #define PSEUDO_INT_FACET(fc) case fc: return In(bits);
-#define PSEUDO_VECTOR_FACET(fc, sc) \
-        case fc: return Vnt(bits / Facet{sc}.Size(), sc);
 #include "facet.inc"
 #undef PSEUDO_INT_FACET
-#undef PSEUDO_VECTOR_FACET
     default:
         return *this;
     }

@@ -43,7 +43,6 @@ public:
         INVALID = 0,
         GP,     // 64-bit
         FLAG,   // status flag
-        VEC,    // >= 128-bit
     };
 
 private:
@@ -70,9 +69,7 @@ public:
     static constexpr ArchReg GP(unsigned idx) {
         return ArchReg(RegKind::GP, idx);
     }
-    static constexpr ArchReg VEC(unsigned idx) {
-        return ArchReg(RegKind::VEC, idx);
-    }
+
     static constexpr ArchReg FLAG(unsigned idx) {
         return ArchReg(RegKind::FLAG, idx);
     }
@@ -82,8 +79,6 @@ public:
     // x86-64-specific names ignored by other archs
     static const ArchReg RAX, RCX, RDX, RBX, RSP, RBP, RSI, RDI;
 
-    // AArch64-specific names
-    static const ArchReg A64_SP;
 };
 
 constexpr const ArchReg ArchReg::INVALID{ArchReg::RegKind::INVALID, 0};
@@ -102,7 +97,7 @@ constexpr const ArchReg ArchReg::CF = ArchReg::FLAG(3);
 constexpr const ArchReg ArchReg::OF = ArchReg::FLAG(4);
 constexpr const ArchReg ArchReg::AF = ArchReg::FLAG(5);
 constexpr const ArchReg ArchReg::DF = ArchReg::FLAG(6);
-constexpr const ArchReg ArchReg::A64_SP = ArchReg::GP(31);
+
 
 // The calling convention code uses RegisterSet to record which registers
 // are used by the basic blocks of a function, in order to generate loads

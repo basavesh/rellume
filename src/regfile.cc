@@ -50,9 +50,6 @@ unsigned RegisterSetBitIdx(ArchReg reg) {
         return 1 + reg.Index();
     case ArchReg::RegKind::GP:
         return 8 + reg.Index();
-    case ArchReg::RegKind::VEC:
-        // Leave space for 32 GP registers
-        return 40 + reg.Index();
     default:
         assert(false && "invalid register kind");
     }
@@ -195,7 +192,7 @@ public:
     impl(Arch arch, llvm::BasicBlock* bb)
             : irb(bb), dirty_regs() {
         switch (arch) {
-        case Arch::X86_64: ivec_facet = Facet::V2I64; break;
+        case Arch::X86_64: break;
         default: assert(false);
         }
     }
@@ -266,8 +263,6 @@ private:
     llvm::BasicBlock* phiBlock = nullptr;
     std::vector<PhiDesc>* phiDescs = nullptr;
 
-    Facet ivec_facet;
-
     RegisterSet dirty_regs;
 
     Register* AccessReg(ArchReg reg);
@@ -294,9 +289,6 @@ Register* RegFile::impl::AccessReg(ArchReg reg) {
     case ArchReg::RegKind::GP:
         assert(idx < 32);
         return &regs[8 + idx];
-    case ArchReg::RegKind::VEC:
-        assert(idx < 32);
-        return &regs[40 + idx];
     default:
         assert(false);
         return nullptr;
@@ -311,8 +303,6 @@ Facet RegFile::impl::NativeFacet(ArchReg reg) {
         if (reg == ArchReg::PF)
             return Facet::I8;
         return Facet::I1;
-    case ArchReg::RegKind::VEC:
-        return ivec_facet;
     default:
         assert(false);
         return Facet::I64;
